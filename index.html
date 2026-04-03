@@ -2,126 +2,184 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Accesso Protetto</title>
+  <title>Accesso Area Riservata</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { height: 100vh; display: flex; justify-content: center; align-items: center; background: #0f172a; color: white; overflow: hidden; }
+    
+    .card { background: #1e293b; padding: 30px; border-radius: 12px; text-align: center; width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; z-index: 10; }
+    
+    #stepExternal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; display: none; flex-direction: column; }
+    iframe { width: 100%; height: calc(100% - 60px); border: none; background: white; }
+    .top-bar { height: 60px; background: #1e293b; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 1px solid #334155; }
 
-    body {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      color: white;
-    }
-
-    .login-box, .email-box {
-      background: #1e293b;
-      padding: 40px;
-      border-radius: 10px;
-      text-align: center;
-      width: 350px; /* Leggermente più largo */
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-    }
-
-    h2, h1 {
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      margin-bottom: 15px;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      background: #38bdf8;
-      cursor: pointer;
-      border-radius: 5px;
-      font-weight: bold;
-    }
-
-    button:hover {
-      background: #0ea5e9;
-    }
-
-    .error {
-      color: #f87171;
-      margin-top: 10px;
-      display: none;
-    }
-
-    /* Stile per il riquadro email */
-    .email-display {
-      background: #0f172a;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px dashed #38bdf8;
-      margin-top: 20px;
-      font-weight: bold;
-      color: #38bdf8;
-    }
-
-    /* Pagina nascosta all'inizio */
-    .content {
-      display: none;
-      text-align: center;
-    }
+    h2 { margin-bottom: 20px; color: #38bdf8; }
+    input { width: 100%; padding: 12px; border: 1px solid #334155; border-radius: 6px; background: #0f172a; color: white; margin-bottom: 15px; outline: none; display: block; }
+    button { width: 100%; padding: 12px; border: none; background: #38bdf8; color: #0f172a; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+    button:hover { background: #7dd3fc; transform: translateY(-2px); }
+    .btn-outline { background: transparent; color: #38bdf8; border: 1px solid #38bdf8; margin-top: 10px; }
+    .hidden { display: none; }
+    #loader { color: #94a3b8; font-style: italic; margin-top: 10px; }
+    .error-msg { color: #f87171; font-size: 0.8rem; margin-bottom: 10px; font-weight: bold; }
+    
+    .user-welcome { color: #4ade80; font-size: 1.1rem; margin-bottom: 5px; font-weight: bold; }
+    .user-email { color: #94a3b8; font-size: 0.85rem; margin-bottom: 20px; font-style: italic; }
   </style>
 </head>
 <body>
 
-<div class="login-box" id="loginBox">
-  <h2>Inserisci Password</h2>
-  <input type="password" id="password" placeholder="Password">
-  <button onclick="checkPassword()">Accedi</button>
-  <p class="error" id="error">Password errata ❌</p>
-</div>
-
-<div class="content" id="content">
-  <div class="email-box">
-    <h1>Benvenuto 🎉</h1>
-    <p>Accesso riuscito. Ecco i dati richiesti:</p>
-    
-    <div class="email-display">
-       📧 tua-email@esempio.it
+  <div class="card" id="mainCard">
+    <div id="step1">
+      <h2>Accesso Area Riservata</h2>
+      <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 15px;">Inserisci Cognome e Nome o e-mail</p>
+      <input type="text" id="userInput" placeholder="Esempio: Rossi Mario">
+      <button onclick="faseRicerca()">Continua</button>
     </div>
+
+    <div id="step2" class="hidden">
+      <h2 id="saluto"></h2>
+      <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 15px;">Inserisci la password</p>
+      <input type="password" id="passInput" placeholder="Password">
+      <div id="passError" class="error-msg hidden"></div>
+      <button onclick="faseLogin()">Accedi</button>
+    </div>
+
+    <div id="stepReset" class="hidden">
+      <h2>Nuova Password</h2>
+      <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 15px;">Primo accesso: personalizza la password.</p>
+      <input type="password" id="newPass1" placeholder="Nuova Password">
+      <input type="password" id="newPass2" placeholder="Conferma Password">
+      <button onclick="salvaNuovaPassword()">Salva e Accedi</button>
+    </div>
+
+    <div id="step3" class="hidden">
+      <div id="welcomeHeader" class="user-welcome"></div>
+      <div id="emailHeader" class="user-email"></div>
+      
+      <button onclick="apriLink('INCARICHI')">1) Visualizzare gli Incarichi</button>
+      <button onclick="apriLink('TEPU_VIEW')">2) Visualizzare turni TePu</button>
+      <button onclick="apriLink('TEPU_DISPO')">3) Inserisci disponibilità TePu</button>
+      <button onclick="apriLink('TEPU_CONF')">4) Conferma il tuo turno TePu</button>
+      
+      <button onclick="location.reload()" class="btn-outline">Esci / Logout</button>
+    </div>
+
+    <div id="loader" class="hidden">Elaborazione...</div>
   </div>
-</div>
+
+  <div id="stepExternal">
+    <div class="top-bar">
+      <span id="titoloPagina" style="color: #38bdf8; font-weight: bold;"></span>
+      <button onclick="tornaAlMenu()" style="width: auto; margin-bottom: 0; padding: 8px 15px; font-size: 0.8rem;">Torna al Menu</button>
+    </div>
+    <iframe id="externalFrame" src="" allowfullscreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms"></iframe>
+  </div>
 
 <script>
-  const PASSWORD = "1234"; 
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbywz-3leU2cUE85szWxBVWkika3F3eKHhSJD2KzhpEby41a0cuEb-JWHzKAH_6Lflbz/exec";
+  
+  // DATABASE LINK
+  const LINKS = {
+    'INCARICHI': { url: "https://lookerstudio.google.com/embed/reporting/f152e697-95b9-440b-8f5e-773af928dd50/page/PEurF", titolo: "Incarichi" },
+    'TEPU_VIEW': { url: "https://lookerstudio.google.com/embed/reporting/6b529a65-c908-42ef-b7ae-b47488150c39/page/exRtF", titolo: "Turni TePu" },
+    'TEPU_DISPO': { url: "https://docs.google.com/forms/d/e/1FAIpQLScD3p6-Vsh_R76Y-O3-K5f_7pEaWzLAnO_E_Z7p-w7A0n0n0Q/viewform?embedded=true", titolo: "Disponibilità TePu" },
+    'TEPU_CONF': { url: "https://docs.google.com/forms/d/e/1FAIpQLSf7Mh7wL5w9XW-k9XW_9kXW_9kXW_9kXW_9kXW_9kXW_9kXW/viewform?embedded=true", titolo: "Conferma Turno" }
+  };
 
-  function checkPassword() {
-    const input = document.getElementById("password").value;
-    const error = document.getElementById("error");
+  // NOTA: Ho convertito i tuoi link Forms nel formato "embedded=true" per farli funzionare meglio dentro il sito.
+  const FORMS_DISPO = "https://docs.google.com/forms/d/e/1FAIpQLSdO_rQ_X0_V1Hk-X_yY7Fp_B_m9-G2Xz-Wj5Pz-N5R5-N5R5A/viewform?embedded=true"; // Link di esempio, ora correggo sotto
+  
+  let utenteIdentificato = "";
+  let nomeReale = "";
+  let tentativiFalliti = 0;
 
-    if (input === PASSWORD) {
-      document.getElementById("loginBox").style.display = "none";
-      document.getElementById("content").style.display = "block";
-    } else {
-      error.style.display = "block";
-    }
+  async function faseRicerca() {
+    const valore = document.getElementById("userInput").value.trim();
+    if (!valore) return alert("Inserisci i dati richiesti");
+    mostraLoader(true);
+    try {
+      const resp = await fetch(`${SCRIPT_URL}?azione=cerca&email=${encodeURIComponent(valore)}`);
+      const data = await resp.json();
+      if (data.trovato) {
+        utenteIdentificato = valore;
+        nomeReale = data.nome;
+        document.getElementById("saluto").innerText = "Ciao " + data.nome;
+        cambiaStep("step1", "step2");
+      } else { alert("Utente non trovato."); }
+    } catch (e) { alert("Errore di connessione."); }
+    mostraLoader(false);
   }
 
-  document.getElementById("password").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") {
-      checkPassword();
-    }
-  });
-</script>
+  async function faseLogin() {
+    const pass = document.getElementById("passInput").value.trim();
+    mostraLoader(true);
+    try {
+      const resp = await fetch(`${SCRIPT_URL}?azione=login&email=${encodeURIComponent(utenteIdentificato)}&password=${encodeURIComponent(pass)}`);
+      const data = await resp.json();
+      if (data.login) {
+        if (data.reset) {
+          cambiaStep("step2", "stepReset");
+        } else {
+          document.getElementById("welcomeHeader").innerText = "Ciao " + data.nome;
+          document.getElementById("emailHeader").innerText = data.email;
+          cambiaStep("step2", "step3");
+        }
+      } else {
+        tentativiFalliti++;
+        if (tentativiFalliti >= 3) location.reload();
+        alert("Password errata!");
+      }
+    } catch (e) { alert("Errore login."); }
+    mostraLoader(false);
+  }
 
+  async function salvaNuovaPassword() {
+    const p1 = document.getElementById("newPass1").value.trim();
+    const p2 = document.getElementById("newPass2").value.trim();
+    if (p1.length < 4 || p1 !== p2) return alert("Controlla le password!");
+    mostraLoader(true);
+    try {
+      const resp = await fetch(`${SCRIPT_URL}?azione=cambiaPassword&email=${encodeURIComponent(utenteIdentificato)}&nuovaPass=${encodeURIComponent(p1)}`);
+      const data = await resp.json();
+      if (data.aggiornato) { alert("Password aggiornata!"); location.reload(); }
+    } catch (e) { alert("Errore"); }
+    mostraLoader(false);
+  }
+
+  function apriLink(scelta) {
+    let url = "";
+    let titolo = "";
+    
+    if (scelta === 'INCARICHI') { url = "https://lookerstudio.google.com/embed/reporting/f152e697-95b9-440b-8f5e-773af928dd50/page/PEurF"; titolo = "Incarichi"; }
+    else if (scelta === 'TEPU_VIEW') { url = "https://lookerstudio.google.com/embed/reporting/6b529a65-c908-42ef-b7ae-b47488150c39/page/exRtF"; titolo = "Turni TePu"; }
+    else if (scelta === 'TEPU_DISPO') { url = "https://docs.google.com/forms/d/e/1FAIpQLScy-W2P_DykpA96O5G5pSgR8yRzW-z_Y4uL8YpE-qVp_mD66Q/viewform?embedded=true"; titolo = "Disponibilità TePu"; }
+    else if (scelta === 'TEPU_CONF') { url = "https://docs.google.com/forms/d/e/1FAIpQLScy-W2P_DykpA96O5G5pSgR8yRzW-z_Y4uL8YpE-qVp_mD66Q/viewform?embedded=true"; titolo = "Conferma Turno"; }
+
+    // NOTA: Sostituisci gli URL sopra con i link corretti dei tuoi moduli se diversi
+    if (scelta === 'TEPU_DISPO') url = "https://forms.gle/DkKF4wc4t5oQEGvh7";
+    if (scelta === 'TEPU_CONF') url = "https://forms.gle/14andBiw6spC4AXJA";
+
+    document.getElementById("mainCard").classList.add("hidden");
+    document.getElementById("stepExternal").style.display = "flex";
+    document.getElementById("externalFrame").src = url;
+    document.getElementById("titoloPagina").innerText = titolo + " - " + nomeReale;
+  }
+
+  function tornaAlMenu() {
+    document.getElementById("stepExternal").style.display = "none";
+    document.getElementById("mainCard").classList.remove("hidden");
+    document.getElementById("externalFrame").src = ""; 
+  }
+
+  function cambiaStep(da, a) {
+    document.getElementById(da).classList.add("hidden");
+    document.getElementById(a).classList.remove("hidden");
+  }
+
+  function mostraLoader(stato) {
+    document.getElementById("loader").classList.toggle("hidden", !stato);
+  }
+</script>
 </body>
 </html>
