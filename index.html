@@ -22,16 +22,16 @@
       color: white;
     }
 
-    .login-box {
+    .login-box, .email-box {
       background: #1e293b;
       padding: 40px;
       border-radius: 10px;
       text-align: center;
-      width: 300px;
+      width: 350px; /* Leggermente più largo */
       box-shadow: 0 0 20px rgba(0,0,0,0.3);
     }
 
-    h2 {
+    h2, h1 {
       margin-bottom: 20px;
     }
 
@@ -50,6 +50,7 @@
       background: #38bdf8;
       cursor: pointer;
       border-radius: 5px;
+      font-weight: bold;
     }
 
     button:hover {
@@ -62,14 +63,24 @@
       display: none;
     }
 
-    /* Pagina nascosta */
+    /* Stile per il riquadro email */
+    .email-display {
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px dashed #38bdf8;
+      margin-top: 20px;
+      font-weight: bold;
+      color: #38bdf8;
+    }
+
+    /* Pagina nascosta all'inizio */
     .content {
       display: none;
       text-align: center;
     }
   </style>
 </head>
-
 <body>
 
 <div class="login-box" id="loginBox">
@@ -80,12 +91,18 @@
 </div>
 
 <div class="content" id="content">
-  <h1>Benvenuto nel tuo sito 🎉</h1>
-  <p>Accesso riuscito!</p>
+  <div class="email-box">
+    <h1>Benvenuto 🎉</h1>
+    <p>Accesso riuscito. Ecco i dati richiesti:</p>
+    
+    <div class="email-display">
+       📧 tua-email@esempio.it
+    </div>
+  </div>
 </div>
 
 <script>
-  const PASSWORD = "1234"; // 🔑 CAMBIA QUI
+  const PASSWORD = "1234"; 
 
   function checkPassword() {
     const input = document.getElementById("password").value;
@@ -99,7 +116,6 @@
     }
   }
 
-  // Invio con ENTER
   document.getElementById("password").addEventListener("keypress", function(e) {
     if (e.key === "Enter") {
       checkPassword();
