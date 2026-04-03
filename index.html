@@ -8,46 +8,62 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { height: 100vh; display: flex; justify-content: center; align-items: center; background: #0f172a; color: white; overflow: hidden; }
     
-    .card { background: #1e293b; padding: 30px; border-radius: 12px; text-align: center; width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; z-index: 10; }
+    .card { background: #1e293b; padding: 30px; border-radius: 12px; text-align: center; width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; z-index: 10; }
     
     #stepExternal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; display: none; flex-direction: column; }
     iframe { width: 100%; height: calc(100% - 60px); border: none; background: white; }
     .top-bar { height: 60px; background: #1e293b; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 1px solid #334155; }
 
     h2 { margin-bottom: 20px; color: #38bdf8; }
-    input { width: 100%; padding: 12px; border: 1px solid #334155; border-radius: 6px; background: #0f172a; color: white; margin-bottom: 15px; outline: none; display: block; width: 100%; }
+    input { width: 100%; padding: 12px; border: 1px solid #334155; border-radius: 6px; background: #0f172a; color: white; margin-bottom: 15px; outline: none; display: block; }
     
+    /* PULSANTI ALLINEATI A SINISTRA */
     button { 
       width: 100%; 
-      padding: 12px; 
+      padding: 14px 20px; /* Più spazio interno */
       border: none; 
       background: #38bdf8; 
       color: #0f172a; 
       font-weight: bold; 
-      border-radius: 6px; 
+      border-radius: 8px; 
       cursor: pointer; 
       transition: 0.3s; 
-      margin-bottom: 8px; 
+      margin-bottom: 10px; 
       display: flex; 
       align-items: center; 
-      justify-content: center; 
-      gap: 10px; 
+      justify-content: flex-start; /* Allinea a sinistra */
+      gap: 15px; /* Spazio tra icona e testo */
+      font-size: 0.95rem;
     }
-    button:hover { background: #7dd3fc; transform: translateY(-2px); }
+    button:hover { background: #7dd3fc; transform: translateX(5px); } /* Effetto scivolamento a destra */
     
-    .btn-icon {
-      height: 20px; 
-      width: auto;
-      border-radius: 2px;
+    /* SPAZIO FISSO PER L'ICONA PER ALLINEARE I TESTI */
+    .icon-container {
+      width: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    .btn-outline { background: transparent; color: #38bdf8; border: 1px solid #38bdf8; margin-top: 10px; justify-content: center; }
+    .btn-icon {
+      max-height: 24px; 
+      width: auto;
+      border-radius: 3px;
+    }
+
+    .btn-outline { 
+      background: transparent; 
+      color: #38bdf8; 
+      border: 1px solid #38bdf8; 
+      margin-top: 10px; 
+      justify-content: center; /* Logout rimane centrato */
+    }
     .hidden { display: none; }
     #loader { color: #94a3b8; font-style: italic; margin-top: 10px; }
     .error-msg { color: #f87171; font-size: 0.8rem; margin-bottom: 10px; font-weight: bold; }
     
-    .user-welcome { color: #4ade80; font-size: 1.1rem; margin-bottom: 5px; font-weight: bold; }
-    .user-email { color: #94a3b8; font-size: 0.85rem; margin-bottom: 20px; font-style: italic; }
+    .user-welcome { color: #4ade80; font-size: 1.2rem; margin-bottom: 5px; font-weight: bold; }
+    .user-email { color: #94a3b8; font-size: 0.85rem; margin-bottom: 25px; font-style: italic; }
   </style>
 </head>
 <body>
@@ -55,47 +71,46 @@
   <div class="card" id="mainCard">
     <div id="step1">
       <h2>Accesso Area Riservata</h2>
-      <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 15px;">Inserisci Cognome e Nome o e-mail</p>
-      <input type="text" id="userInput" placeholder="Esempio: Rossi Mario">
-      <button onclick="faseRicerca()">Continua</button>
+      <input type="text" id="userInput" placeholder="Cognome e Nome o e-mail">
+      <button onclick="faseRicerca()" style="justify-content: center;">Continua</button>
     </div>
 
     <div id="step2" class="hidden">
       <h2 id="saluto"></h2>
-      <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 15px;">Inserisci la password</p>
-      <input type="password" id="passInput" placeholder="Password">
+      <input type="password" id="passInput" placeholder="Inserisci Password">
       <div id="passError" class="error-msg hidden"></div>
-      <button onclick="faseLogin()">Accedi</button>
+      <button onclick="faseLogin()" style="justify-content: center;">Accedi</button>
     </div>
 
     <div id="stepReset" class="hidden">
       <h2>Nuova Password</h2>
-      <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 15px;">Primo accesso: personalizza la password.</p>
       <input type="password" id="newPass1" placeholder="Nuova Password">
       <input type="password" id="newPass2" placeholder="Conferma Password">
-      <button onclick="salvaNuovaPassword()">Salva e Accedi</button>
+      <button onclick="salvaNuovaPassword()" style="justify-content: center;">Salva e Accedi</button>
     </div>
 
     <div id="step3" class="hidden">
       <div id="welcomeHeader" class="user-welcome"></div>
       <div id="emailHeader" class="user-email"></div>
       
-      <button onclick="apriLink('INCARICHI')">1) Visualizzare gli Incarichi</button>
+      <button onclick="apriLink('INCARICHI')">
+        <div class="icon-container">📄</div> 1) Visualizzare gli Incarichi
+      </button>
       
       <button onclick="apriLink('TEPU_VIEW')">
-        <img src="TEPU.jpg" class="btn-icon"> 2) Visualizzare turni TePu
+        <div class="icon-container"><img src="TEPU.jpg" class="btn-icon"></div> 2) Visualizzare turni TePu
       </button>
       
       <button onclick="apriLink('TEPU_SITO')">
-        <img src="TEPU.jpg" class="btn-icon"> 3) Visualizza sito TePu
+        <div class="icon-container"><img src="TEPU.jpg" class="btn-icon"></div> 3) Visualizza sito TePu
       </button>
       
       <button onclick="apriLink('TEPU_DISPO')">
-        <img src="CONFERMA.jpg" class="btn-icon"> 4) Inserisci disponibilità TePu
+        <div class="icon-container"><img src="CONFERMA.jpg" class="btn-icon"></div> 4) Inserisci disponibilità TePu
       </button>
       
       <button onclick="apriLink('TEPU_CONF')">
-        <img src="CONFERMA.jpg" class="btn-icon"> 5) Conferma il tuo turno TePu
+        <div class="icon-container"><img src="CONFERMA.jpg" class="btn-icon"></div> 5) Conferma il tuo turno TePu
       </button>
       
       <button onclick="location.reload()" class="btn-outline">Esci / Logout</button>
@@ -167,7 +182,7 @@
     try {
       const resp = await fetch(`${SCRIPT_URL}?azione=cambiaPassword&email=${encodeURIComponent(utenteIdentificato)}&nuovaPass=${encodeURIComponent(p1)}`);
       const data = await resp.json();
-      if (data.aggiornato) { alert("Password aggiornata! Ora esegui l'accesso."); location.reload(); }
+      if (data.aggiornato) { alert("Password aggiornata! Ora accedi."); location.reload(); }
     } catch (e) { alert("Errore"); }
     mostraLoader(false);
   }
