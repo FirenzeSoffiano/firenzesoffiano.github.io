@@ -16,9 +16,34 @@
 
     h2 { margin-bottom: 20px; color: #38bdf8; }
     input { width: 100%; padding: 12px; border: 1px solid #334155; border-radius: 6px; background: #0f172a; color: white; margin-bottom: 15px; outline: none; display: block; width: 100%; }
-    button { width: 100%; padding: 12px; border: none; background: #38bdf8; color: #0f172a; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; margin-bottom: 8px; }
+    
+    /* Stile pulsanti con supporto icone */
+    button { 
+      width: 100%; 
+      padding: 12px; 
+      border: none; 
+      background: #38bdf8; 
+      color: #0f172a; 
+      font-weight: bold; 
+      border-radius: 6px; 
+      cursor: pointer; 
+      transition: 0.3s; 
+      margin-bottom: 8px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 10px; /* Spazio tra immagine e testo */
+    }
     button:hover { background: #7dd3fc; transform: translateY(-2px); }
-    .btn-outline { background: transparent; color: #38bdf8; border: 1px solid #38bdf8; margin-top: 10px; }
+    
+    /* Classe per l'immagine TePu nei pulsanti */
+    .btn-icon {
+      height: 20px; /* Piccola e discreta */
+      width: auto;
+      border-radius: 2px;
+    }
+
+    .btn-outline { background: transparent; color: #38bdf8; border: 1px solid #38bdf8; margin-top: 10px; justify-content: center; }
     .hidden { display: none; }
     #loader { color: #94a3b8; font-style: italic; margin-top: 10px; }
     .error-msg { color: #f87171; font-size: 0.8rem; margin-bottom: 10px; font-weight: bold; }
@@ -58,10 +83,22 @@
       <div id="emailHeader" class="user-email"></div>
       
       <button onclick="apriLink('INCARICHI')">1) Visualizzare gli Incarichi</button>
-      <button onclick="apriLink('TEPU_VIEW')">2) Visualizzare turni TePu</button>
-      <button onclick="apriLink('TEPU_SITO')">3) Visualizza sito TePu</button>
-      <button onclick="apriLink('TEPU_DISPO')">4) Inserisci disponibilità TePu</button>
-      <button onclick="apriLink('TEPU_CONF')">5) Conferma il tuo turno TePu</button>
+      
+      <button onclick="apriLink('TEPU_VIEW')">
+        <img src="TEPU.jpg" class="btn-icon"> 2) Visualizzare turni TePu
+      </button>
+      
+      <button onclick="apriLink('TEPU_SITO')">
+        <img src="TEPU.jpg" class="btn-icon"> 3) Visualizza sito TePu
+      </button>
+      
+      <button onclick="apriLink('TEPU_DISPO')">
+        <img src="TEPU.jpg" class="btn-icon"> 4) Inserisci disponibilità TePu
+      </button>
+      
+      <button onclick="apriLink('TEPU_CONF')">
+        <img src="TEPU.jpg" class="btn-icon"> 5) Conferma il tuo turno TePu
+      </button>
       
       <button onclick="location.reload()" class="btn-outline">Esci / Logout</button>
     </div>
@@ -78,6 +115,7 @@
   </div>
 
 <script>
+  // ... (Tutto lo script rimane identico a quello precedente)
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbywz-3leU2cUE85szWxBVWkika3F3eKHhSJD2KzhpEby41a0cuEb-JWHzKAH_6Lflbz/exec";
   
   let utenteIdentificato = "";
@@ -150,7 +188,6 @@
         titolo = "Turni TePu"; 
     }
     else if (scelta === 'TEPU_SITO') { 
-        // Risoluzione errore blocco Google Sites: apertura in scheda esterna
         window.open("https://sites.google.com/view/tepu/home?authuser=0", "_blank");
         return; 
     }
