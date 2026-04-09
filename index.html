@@ -1,68 +1,29 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>Accesso Area Riservata</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    /* CSS ORIGINALE */
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { height: 100vh; display: flex; justify-content: center; align-items: center; background: #0f172a; color: white; overflow: hidden; }
-    
     .card { background: #1e293b; padding: 30px; border-radius: 12px; text-align: center; width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; z-index: 10; }
-    
     #stepExternal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; display: none; flex-direction: column; }
     iframe { width: 100%; height: calc(100% - 60px); border: none; background: white; }
     .top-bar { height: 60px; background: #1e293b; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 1px solid #334155; }
-
     h2 { margin-bottom: 20px; color: #38bdf8; }
     input { width: 100%; padding: 12px; border: 1px solid #334155; border-radius: 6px; background: #0f172a; color: white; margin-bottom: 15px; outline: none; display: block; }
-    
-    button { 
-      width: 100%; 
-      padding: 14px 20px; 
-      border: none; 
-      background: #38bdf8; 
-      color: #0f172a; 
-      font-weight: bold; 
-      border-radius: 8px; 
-      cursor: pointer; 
-      transition: 0.3s; 
-      margin-bottom: 10px; 
-      display: flex; 
-      align-items: center; 
-      justify-content: flex-start; 
-      gap: 15px; 
-      font-size: 0.95rem;
-    }
+    button { width: 100%; padding: 14px 20px; border: none; background: #38bdf8; color: #0f172a; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; margin-bottom: 10px; display: flex; align-items: center; justify-content: flex-start; gap: 15px; font-size: 0.95rem; }
     button:hover { background: #7dd3fc; transform: translateX(5px); }
-    
-    .icon-container {
-      width: 30px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .btn-icon {
-      max-height: 24px; 
-      width: auto;
-      border-radius: 3px;
-    }
-
-    .btn-outline { 
-      background: transparent; 
-      color: #38bdf8; 
-      border: 1px solid #38bdf8; 
-      margin-top: 10px; 
-      justify-content: center; 
-    }
+    .icon-container { width: 30px; display: flex; justify-content: center; align-items: center; }
+    .btn-icon { max-height: 24px; width: auto; border-radius: 3px; }
+    .btn-outline { background: transparent; color: #38bdf8; border: 1px solid #38bdf8; margin-top: 10px; justify-content: center; }
     .hidden { display: none; }
     #loader { color: #94a3b8; font-style: italic; margin-top: 10px; }
     .error-msg { color: #f87171; font-size: 0.8rem; margin-bottom: 10px; font-weight: bold; }
-    
     .user-welcome { color: #4ade80; font-size: 1.2rem; margin-bottom: 5px; font-weight: bold; }
     .user-email { color: #94a3b8; font-size: 0.85rem; margin-bottom: 25px; font-style: italic; }
-  </style>
+</style>
 </head>
 <body>
 
@@ -82,7 +43,6 @@
 
     <div id="stepReset" class="hidden">
       <h2>Nuova Password</h2>
-      <p style="font-size: 0.8rem; margin-bottom: 10px; color: #94a3b8;">È necessario impostare una nuova password al primo accesso.</p>
       <input type="password" id="newPass1" placeholder="Nuova Password">
       <input type="password" id="newPass2" placeholder="Conferma Password">
       <button onclick="salvaNuovaPassword()" style="justify-content: center;">Salva e Accedi</button>
@@ -96,25 +56,29 @@
         <div class="icon-container">📄</div> 1) Visualizzare gli Incarichi
       </button>
       
+      <button id="btnAppSheet" class="hidden" onclick="apriLink('APPSHEET')">
+        <div class="icon-container">
+          <img src="https://i.ibb.co/Lz0xS0R/APPSHEET.jpg" class="btn-icon">
+        </div> 
+        AppSheet Incarichi
+      </button>
+
       <button onclick="apriLink('TEPU_VIEW')">
         <div class="icon-container"><img src="TEPU.jpg" class="btn-icon"></div> 2) Visualizzare turni TePu
       </button>
-      
       <button onclick="apriLink('TEPU_SITO')">
         <div class="icon-container"><img src="TEPU.jpg" class="btn-icon"></div> 3) Visualizza sito TePu
       </button>
-      
       <button onclick="apriLink('TEPU_DISPO')">
         <div class="icon-container"><img src="CONFERMA.jpg" class="btn-icon"></div> 4) Inserisci disponibilità TePu
       </button>
-      
       <button onclick="apriLink('TEPU_CONF')">
         <div class="icon-container"><img src="CONFERMA.jpg" class="btn-icon"></div> 5) Conferma il tuo turno TePu
       </button>
       
       <button onclick="location.reload()" class="btn-outline">Esci / Logout</button>
     </div>
-
+    
     <div id="loader" class="hidden">Elaborazione...</div>
   </div>
 
@@ -127,11 +91,13 @@
   </div>
 
 <script>
+  // URL dello Script (Mantieni il tuo attuale)
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbywz-3leU2cUE85szWxBVWkika3F3eKHhSJD2KzhpEby41a0cuEb-JWHzKAH_6Lflbz/exec";
   
-  let utenteIdentificato = ""; // Email o Nome inserito
-  let nomeReale = "";          // Nome completo restituito dal server
-  let telefonoUtente = "";     // ID UNICO (G) restituito dal server
+  let utenteIdentificato = "";
+  let nomeReale = "";
+  let telefonoUtente = ""; 
+  let linkAppSheetDinamico = ""; // Qui salveremo il link della colonna H
   let tentativiFalliti = 0;
 
   async function faseRicerca() {
@@ -139,34 +105,40 @@
     if (!valore) return alert("Inserisci i dati richiesti");
     mostraLoader(true);
     try {
-      // Cerca l'utente nella tabella principale (per Nome o Email)
-      const resp = await fetch(`${SCRIPT_URL}?azione=cerca&identificativo=${encodeURIComponent(valore)}`);
+      const resp = await fetch(`${SCRIPT_URL}?azione=cerca&email=${encodeURIComponent(valore)}`);
       const data = await resp.json();
       if (data.trovato) {
         utenteIdentificato = valore;
         nomeReale = data.nome;
-        telefonoUtente = data.telefono; // Salviamo il telefono per le azioni successive
+        telefonoUtente = data.telefono; 
         document.getElementById("saluto").innerText = "Ciao " + data.nome;
         cambiaStep("step1", "step2");
       } else { alert("Utente non trovato."); }
-    } catch (e) { alert("Errore di connessione durante la ricerca."); }
+    } catch (e) { alert("Errore di connessione."); }
     mostraLoader(false);
   }
 
   async function faseLogin() {
     const pass = document.getElementById("passInput").value.trim();
-    if (!pass) return alert("Inserisci la password");
     mostraLoader(true);
     try {
-      // Verifica la password nel Database_PW usando il TELEFONO come chiave
       const resp = await fetch(`${SCRIPT_URL}?azione=login&telefono=${encodeURIComponent(telefonoUtente)}&password=${encodeURIComponent(pass)}`);
       const data = await resp.json();
       if (data.login) {
+        // Recuperiamo il link AppSheet inviato dal server
+        linkAppSheetDinamico = data.linkAppSheet || "";
+
         if (data.reset) {
           cambiaStep("step2", "stepReset");
         } else {
           document.getElementById("welcomeHeader").innerText = "Ciao " + nomeReale;
           document.getElementById("emailHeader").innerText = utenteIdentificato;
+          
+          // MOSTRA IL TASTO SOLO SE IL LINK ESISTE E INIZIA CON HTTP
+          if (linkAppSheetDinamico && linkAppSheetDinamico.toLowerCase().startsWith("http")) {
+            document.getElementById("btnAppSheet").classList.remove("hidden");
+          }
+          
           cambiaStep("step2", "step3");
         }
       } else {
@@ -174,24 +146,23 @@
         if (tentativiFalliti >= 3) location.reload();
         alert("Password errata!");
       }
-    } catch (e) { alert("Errore durante il login."); }
+    } catch (e) { alert("Errore login."); }
     mostraLoader(false);
   }
 
   async function salvaNuovaPassword() {
     const p1 = document.getElementById("newPass1").value.trim();
     const p2 = document.getElementById("newPass2").value.trim();
-    if (p1.length < 4 || p1 !== p2) return alert("Le password non coincidono o sono troppo brevi (min 4 caratteri).");
+    if (p1.length < 4 || p1 !== p2) return alert("Controlla le password!");
     mostraLoader(true);
     try {
-      // Aggiorna la password nel Database_PW usando il TELEFONO
       const resp = await fetch(`${SCRIPT_URL}?azione=cambiaPassword&telefono=${encodeURIComponent(telefonoUtente)}&nuovaPass=${encodeURIComponent(p1)}`);
       const data = await resp.json();
       if (data.aggiornato) { 
-        alert("Password aggiornata correttamente! Verrai reindirizzato al login."); 
+        alert("Password aggiornata correttamente!"); 
         location.reload(); 
       }
-    } catch (e) { alert("Errore durante l'aggiornamento della password."); }
+    } catch (e) { alert("Errore durante il salvataggio."); }
     mostraLoader(false);
   }
 
@@ -200,45 +171,51 @@
     let titolo = "";
     
     if (scelta === 'INCARICHI') { 
-        url = "https://lookerstudio.google.com/embed/reporting/f152e697-95b9-440b-8f5e-773af928dd50/page/PEurF"; 
-        titolo = "Incarichi"; 
+      url = "https://lookerstudio.google.com/embed/reporting/f152e697-95b9-440b-8f5e-773af928dd50/page/PEurF"; 
+      titolo = "Incarichi"; 
+    }
+    else if (scelta === 'APPSHEET') { 
+      url = linkAppSheetDinamico; 
+      titolo = "AppSheet Incarichi"; 
     }
     else if (scelta === 'TEPU_VIEW') { 
-        url = "https://lookerstudio.google.com/embed/reporting/6b529a65-c908-42ef-b7ae-b47488150c39/page/exRtF"; 
-        titolo = "Turni TePu"; 
+      url = "https://lookerstudio.google.com/embed/reporting/6b529a65-c908-42ef-b7ae-b47488150c39/page/exRtF"; 
+      titolo = "Turni TePu"; 
     }
     else if (scelta === 'TEPU_SITO') { 
-        window.open("https://sites.google.com/view/tepu/home?authuser=0", "_blank");
-        return; 
+      window.open("https://sites.google.com/view/tepu/home?authuser=0", "_blank"); 
+      return; 
     }
     else if (scelta === 'TEPU_DISPO') { 
-        url = "https://forms.gle/DkKF4wc4t5oQEGvh7"; 
-        titolo = "Disponibilità TePu"; 
+      url = "https://forms.gle/DkKF4wc4t5oQEGvh7"; 
+      titolo = "Disponibilità TePu"; 
     }
     else if (scelta === 'TEPU_CONF') { 
-        url = "https://forms.gle/14andBiw6spC4AXJA"; 
-        titolo = "Conferma Turno"; 
+      url = "https://forms.gle/14andBiw6spC4AXJA"; 
+      titolo = "Conferma Turno"; 
     }
 
-    document.getElementById("mainCard").classList.add("hidden");
-    document.getElementById("stepExternal").style.display = "flex";
-    document.getElementById("externalFrame").src = url;
-    document.getElementById("titoloPagina").innerText = titolo + " - " + nomeReale;
+    if (url) {
+      document.getElementById("mainCard").classList.add("hidden");
+      document.getElementById("stepExternal").style.display = "flex";
+      document.getElementById("externalFrame").src = url;
+      document.getElementById("titoloPagina").innerText = titolo + " - " + nomeReale;
+    }
   }
 
-  function tornaAlMenu() {
-    document.getElementById("stepExternal").style.display = "none";
-    document.getElementById("mainCard").classList.remove("hidden");
+  function tornaAlMenu() { 
+    document.getElementById("stepExternal").style.display = "none"; 
+    document.getElementById("mainCard").classList.remove("hidden"); 
     document.getElementById("externalFrame").src = ""; 
   }
-
-  function cambiaStep(da, a) {
-    document.getElementById(da).classList.add("hidden");
-    document.getElementById(a).classList.remove("hidden");
+  
+  function cambiaStep(da, a) { 
+    document.getElementById(da).classList.add("hidden"); 
+    document.getElementById(a).classList.remove("hidden"); 
   }
-
-  function mostraLoader(stato) {
-    document.getElementById("loader").classList.toggle("hidden", !stato);
+  
+  function mostraLoader(stato) { 
+    document.getElementById("loader").classList.toggle("hidden", !stato); 
   }
 </script>
 </body>
