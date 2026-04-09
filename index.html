@@ -17,10 +17,9 @@
     h2 { margin-bottom: 20px; color: #38bdf8; }
     input { width: 100%; padding: 12px; border: 1px solid #334155; border-radius: 6px; background: #0f172a; color: white; margin-bottom: 15px; outline: none; display: block; }
     
-    /* PULSANTI ALLINEATI A SINISTRA */
     button { 
       width: 100%; 
-      padding: 14px 20px; /* Più spazio interno */
+      padding: 14px 20px; 
       border: none; 
       background: #38bdf8; 
       color: #0f172a; 
@@ -31,13 +30,12 @@
       margin-bottom: 10px; 
       display: flex; 
       align-items: center; 
-      justify-content: flex-start; /* Allinea a sinistra */
-      gap: 15px; /* Spazio tra icona e testo */
+      justify-content: flex-start; 
+      gap: 15px; 
       font-size: 0.95rem;
     }
-    button:hover { background: #7dd3fc; transform: translateX(5px); } /* Effetto scivolamento a destra */
+    button:hover { background: #7dd3fc; transform: translateX(5px); }
     
-    /* SPAZIO FISSO PER L'ICONA PER ALLINEARE I TESTI */
     .icon-container {
       width: 30px;
       display: flex;
@@ -56,7 +54,7 @@
       color: #38bdf8; 
       border: 1px solid #38bdf8; 
       margin-top: 10px; 
-      justify-content: center; /* Logout rimane centrato */
+      justify-content: center; 
     }
     .hidden { display: none; }
     #loader { color: #94a3b8; font-style: italic; margin-top: 10px; }
@@ -84,6 +82,7 @@
 
     <div id="stepReset" class="hidden">
       <h2>Nuova Password</h2>
+      <p style="font-size: 0.8rem; margin-bottom: 10px; color: #94a3b8;">È necessario impostare una nuova password al primo accesso.</p>
       <input type="password" id="newPass1" placeholder="Nuova Password">
       <input type="password" id="newPass2" placeholder="Conferma Password">
       <button onclick="salvaNuovaPassword()" style="justify-content: center;">Salva e Accedi</button>
@@ -130,8 +129,9 @@
 <script>
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbywz-3leU2cUE85szWxBVWkika3F3eKHhSJD2KzhpEby41a0cuEb-JWHzKAH_6Lflbz/exec";
   
-  let utenteIdentificato = "";
-  let nomeReale = "";
+  let utenteIdentificato = ""; // Email o Nome inserito
+  let nomeReale = "";          // Nome completo restituito dal server
+  let telefonoUtente = "";     // ID UNICO (G) restituito dal server
   let tentativiFalliti = 0;
 
   async function faseRicerca() {
@@ -139,30 +139,34 @@
     if (!valore) return alert("Inserisci i dati richiesti");
     mostraLoader(true);
     try {
-      const resp = await fetch(`${SCRIPT_URL}?azione=cerca&email=${encodeURIComponent(valore)}`);
+      // Cerca l'utente nella tabella principale (per Nome o Email)
+      const resp = await fetch(`${SCRIPT_URL}?azione=cerca&identificativo=${encodeURIComponent(valore)}`);
       const data = await resp.json();
       if (data.trovato) {
         utenteIdentificato = valore;
         nomeReale = data.nome;
+        telefonoUtente = data.telefono; // Salviamo il telefono per le azioni successive
         document.getElementById("saluto").innerText = "Ciao " + data.nome;
         cambiaStep("step1", "step2");
       } else { alert("Utente non trovato."); }
-    } catch (e) { alert("Errore di connessione."); }
+    } catch (e) { alert("Errore di connessione durante la ricerca."); }
     mostraLoader(false);
   }
 
   async function faseLogin() {
     const pass = document.getElementById("passInput").value.trim();
+    if (!pass) return alert("Inserisci la password");
     mostraLoader(true);
     try {
-      const resp = await fetch(`${SCRIPT_URL}?azione=login&email=${encodeURIComponent(utenteIdentificato)}&password=${encodeURIComponent(pass)}`);
+      // Verifica la password nel Database_PW usando il TELEFONO come chiave
+      const resp = await fetch(`${SCRIPT_URL}?azione=login&telefono=${encodeURIComponent(telefonoUtente)}&password=${encodeURIComponent(pass)}`);
       const data = await resp.json();
       if (data.login) {
         if (data.reset) {
           cambiaStep("step2", "stepReset");
         } else {
-          document.getElementById("welcomeHeader").innerText = "Ciao " + data.nome;
-          document.getElementById("emailHeader").innerText = data.email;
+          document.getElementById("welcomeHeader").innerText = "Ciao " + nomeReale;
+          document.getElementById("emailHeader").innerText = utenteIdentificato;
           cambiaStep("step2", "step3");
         }
       } else {
@@ -170,20 +174,24 @@
         if (tentativiFalliti >= 3) location.reload();
         alert("Password errata!");
       }
-    } catch (e) { alert("Errore login."); }
+    } catch (e) { alert("Errore durante il login."); }
     mostraLoader(false);
   }
 
   async function salvaNuovaPassword() {
     const p1 = document.getElementById("newPass1").value.trim();
     const p2 = document.getElementById("newPass2").value.trim();
-    if (p1.length < 4 || p1 !== p2) return alert("Controlla le password!");
+    if (p1.length < 4 || p1 !== p2) return alert("Le password non coincidono o sono troppo brevi (min 4 caratteri).");
     mostraLoader(true);
     try {
-      const resp = await fetch(`${SCRIPT_URL}?azione=cambiaPassword&email=${encodeURIComponent(utenteIdentificato)}&nuovaPass=${encodeURIComponent(p1)}`);
+      // Aggiorna la password nel Database_PW usando il TELEFONO
+      const resp = await fetch(`${SCRIPT_URL}?azione=cambiaPassword&telefono=${encodeURIComponent(telefonoUtente)}&nuovaPass=${encodeURIComponent(p1)}`);
       const data = await resp.json();
-      if (data.aggiornato) { alert("Password aggiornata! Ora accedi."); location.reload(); }
-    } catch (e) { alert("Errore"); }
+      if (data.aggiornato) { 
+        alert("Password aggiornata correttamente! Verrai reindirizzato al login."); 
+        location.reload(); 
+      }
+    } catch (e) { alert("Errore durante l'aggiornamento della password."); }
     mostraLoader(false);
   }
 
