@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Firenze Soffiano</title>
+<title>🏡Firenze Soffiano - v2.2</title>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { height: 100vh; display: flex; justify-content: center; align-items: center; background: #0f172a; color: white; overflow: hidden; }
-    .card { background: #1e293b; padding: 30px; border-radius: 12px; text-align: center; width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; z-index: 10; }
+    .card { background: #1e293b; padding: 30px; border-radius: 12px; text-align: center; width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155; z-index: 10; position: relative; }
     #stepExternal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; display: none; flex-direction: column; }
     iframe { width: 100%; height: calc(100% - 60px); border: none; background: white; }
     .top-bar { height: 60px; background: #1e293b; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 1px solid #334155; }
-    h2 { margin-bottom: 20px; color: #38bdf8; }
+    h2 { margin-bottom: 5px; color: #38bdf8; font-size: 1.5rem; }
+    .testata-seconda-riga { margin-bottom: 25px; color: #38bdf8; font-size: 1.1rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
     input { width: 100%; padding: 12px; border: 1px solid #334155; border-radius: 6px; background: #0f172a; color: white; margin-bottom: 15px; outline: none; display: block; }
     button { width: 100%; padding: 14px 20px; border: none; background: #38bdf8; color: #0f172a; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; margin-bottom: 10px; display: flex; align-items: center; justify-content: flex-start; gap: 15px; font-size: 0.95rem; text-align: left; }
     button:hover { background: #7dd3fc; transform: translateX(5px); }
@@ -19,9 +20,10 @@
     .btn-icon { max-height: 24px; width: auto; border-radius: 3px; object-fit: contain; }
     .btn-outline { background: transparent; color: #38bdf8; border: 1px solid #38bdf8; margin-top: 10px; justify-content: center; text-align: center; }
     .hidden { display: none !important; }
-    #loader { color: #94a3b8; font-style: italic; margin-top: 10px; }
+    #loader { color: #94a3b8; font-style: italic; margin-top: 10px; font-size: 0.9rem; }
     .user-welcome { color: #4ade80; font-size: 1.2rem; margin-bottom: 5px; font-weight: bold; }
     .user-email { color: #94a3b8; font-size: 0.85rem; margin-bottom: 25px; font-style: italic; }
+    .version-label { position: absolute; bottom: 10px; right: 15px; font-size: 0.7rem; color: #475569; font-style: italic; }
 </style>
 </head>
 <body>
@@ -29,11 +31,13 @@
   <div class="card" id="mainCard">
     <div id="step1">
       <h2>Accesso Area Riservata</h2>
+      <div class="testata-seconda-riga">🏡Firenze Soffiano</div>
       <input type="text" id="userInput" placeholder="Cognome e Nome o e-mail">
       <button onclick="faseRicerca()" style="justify-content: center; text-align: center;">Continua</button>
     </div>
 
     <div id="step2" class="hidden">
+      <div class="testata-seconda-riga" style="margin-bottom: 10px;">🏡Firenze Soffiano</div>
       <h2 id="saluto"></h2>
       <input type="password" id="passInput" placeholder="Inserisci Password">
       <button onclick="faseLogin()" style="justify-content: center; text-align: center;">Accedi</button>
@@ -47,6 +51,7 @@
     </div>
 
     <div id="step3" class="hidden">
+      <div class="testata-seconda-riga" style="margin-bottom: 10px;">🏡Firenze Soffiano</div>
       <div id="welcomeHeader" class="user-welcome"></div>
       <div id="emailHeader" class="user-email"></div>
       
@@ -70,7 +75,6 @@
       <button onclick="apriLink('TEPU_SITO')">
         <div class="icon-container"><img src="TEPU.jpg" class="btn-icon"></div> 3) Visualizza sito TePu
       </button>
-
       <button onclick="apriLink('TEPU_DISPO')">
         <div class="icon-container"><img src="CONFERMA.jpg" class="btn-icon"></div> 4) Inserisci disponibilità TePu
       </button>
@@ -80,7 +84,9 @@
 
       <button onclick="location.reload()" class="btn-outline">Esci / Logout</button>
     </div>
-    <div id="loader" class="hidden">Elaborazione...</div>
+    
+    <div id="loader" class="hidden">Controllo in corso, attendere...</div>
+    <div class="version-label">Versione 2.2</div>
   </div>
 
   <div id="stepExternal">
@@ -114,7 +120,7 @@
         document.getElementById("saluto").innerText = "Ciao " + data.nome;
         cambiaStep("step1", "step2");
       } else { alert("Utente non trovato."); }
-    } catch (e) { alert("Errore connessione durante la ricerca."); }
+    } catch (e) { alert("Errore di connessione durante la ricerca."); }
     mostraLoader(false);
   }
 
@@ -134,7 +140,6 @@
           document.getElementById("welcomeHeader").innerText = "Ciao " + nomeReale;
           document.getElementById("emailHeader").innerText = utenteIdentificato;
           
-          // Gestione visibilità tasti dinamici
           if (linkAppSheetDinamico && linkAppSheetDinamico.toLowerCase().startsWith("http")) {
             document.getElementById("btnAppSheet").classList.remove("hidden");
           }
@@ -145,7 +150,7 @@
           cambiaStep("step2", "step3");
         }
       } else { alert("Password errata!"); }
-    } catch (e) { alert("Errore durante il login."); }
+    } catch (e) { alert("Errore di connessione durante il login."); }
     mostraLoader(false);
   }
 
@@ -153,17 +158,18 @@
     let url = ""; let titolo = "";
     if (scelta === 'APPSHEET') { window.open(linkAppSheetDinamico, "_blank"); return; }
     if (scelta === 'APPSHEET_TEPU') { window.open(linkTePuDinamico, "_blank"); return; }
-    
     if (scelta === 'TEPU_SITO') { window.open("https://sites.google.com/view/tepu/home?authuser=0", "_blank"); return; }
     else if (scelta === 'INCARICHI') { url = "https://lookerstudio.google.com/embed/reporting/f152e697-95b9-440b-8f5e-773af928dd50/page/PEurF"; titolo = "Incarichi"; }
     else if (scelta === 'TEPU_VIEW') { url = "https://lookerstudio.google.com/embed/reporting/6b529a65-c908-42ef-b7ae-b47488150c39/page/exRtF"; titolo = "Turni TePu"; }
     else if (scelta === 'TEPU_DISPO') { url = "https://forms.gle/DkKF4wc4t5oQEGvh7"; titolo = "Disponibilità TePu"; }
     else if (scelta === 'TEPU_CONF') { url = "https://forms.gle/14andBiw6spC4AXJA"; titolo = "Conferma Turno"; }
 
-    document.getElementById("mainCard").classList.add("hidden");
-    document.getElementById("stepExternal").style.display = "flex";
-    document.getElementById("externalFrame").src = url;
-    document.getElementById("titoloPagina").innerText = titolo + " - " + nomeReale;
+    if (url) {
+      document.getElementById("mainCard").classList.add("hidden");
+      document.getElementById("stepExternal").style.display = "flex";
+      document.getElementById("externalFrame").src = url;
+      document.getElementById("titoloPagina").innerText = titolo + " - " + nomeReale;
+    }
   }
 
   function tornaAlMenu() { document.getElementById("stepExternal").style.display = "none"; document.getElementById("mainCard").classList.remove("hidden"); document.getElementById("externalFrame").src = ""; }
