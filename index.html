@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Firenze Soffiano</title>
+<title>TePu Firenze Soffiano</title>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { height: 100vh; display: flex; justify-content: center; align-items: center; background: #0f172a; color: white; overflow: hidden; }
@@ -59,6 +59,11 @@
         AppSheet Incarichi
       </button>
 
+      <button id="btnAppSheetTePu" class="hidden" onclick="apriLink('APPSHEET_TEPU')">
+        <div class="icon-container"><img src="APPSHEET.jpg" class="btn-icon"></div> 
+        AppSheet TePu
+      </button>
+
       <button onclick="apriLink('TEPU_VIEW')">
         <div class="icon-container"><img src="TEPU.jpg" class="btn-icon"></div> 2) Visualizzare turni TePu
       </button>
@@ -93,6 +98,7 @@
   let nomeReale = "";
   let telefonoUtente = ""; 
   let linkAppSheetDinamico = "";
+  let linkTePuDinamico = "";
 
   async function faseRicerca() {
     const valore = document.getElementById("userInput").value.trim();
@@ -108,7 +114,7 @@
         document.getElementById("saluto").innerText = "Ciao " + data.nome;
         cambiaStep("step1", "step2");
       } else { alert("Utente non trovato."); }
-    } catch (e) { alert("Errore connessione."); }
+    } catch (e) { alert("Errore connessione durante la ricerca."); }
     mostraLoader(false);
   }
 
@@ -120,25 +126,35 @@
       const data = await resp.json();
       if (data.login) {
         linkAppSheetDinamico = data.linkAppSheet || "";
+        linkTePuDinamico = data.linkTePu || "";
+        
         if (data.reset) {
           cambiaStep("step2", "stepReset");
         } else {
           document.getElementById("welcomeHeader").innerText = "Ciao " + nomeReale;
           document.getElementById("emailHeader").innerText = utenteIdentificato;
+          
+          // Gestione visibilità tasti dinamici
           if (linkAppSheetDinamico && linkAppSheetDinamico.toLowerCase().startsWith("http")) {
             document.getElementById("btnAppSheet").classList.remove("hidden");
           }
+          if (linkTePuDinamico && linkTePuDinamico.toLowerCase().startsWith("http")) {
+            document.getElementById("btnAppSheetTePu").classList.remove("hidden");
+          }
+          
           cambiaStep("step2", "step3");
         }
       } else { alert("Password errata!"); }
-    } catch (e) { alert("Errore login."); }
+    } catch (e) { alert("Errore durante il login."); }
     mostraLoader(false);
   }
 
   function apriLink(scelta) {
     let url = ""; let titolo = "";
     if (scelta === 'APPSHEET') { window.open(linkAppSheetDinamico, "_blank"); return; }
-    else if (scelta === 'TEPU_SITO') { window.open("https://sites.google.com/view/tepu/home?authuser=0", "_blank"); return; }
+    if (scelta === 'APPSHEET_TEPU') { window.open(linkTePuDinamico, "_blank"); return; }
+    
+    if (scelta === 'TEPU_SITO') { window.open("https://sites.google.com/view/tepu/home?authuser=0", "_blank"); return; }
     else if (scelta === 'INCARICHI') { url = "https://lookerstudio.google.com/embed/reporting/f152e697-95b9-440b-8f5e-773af928dd50/page/PEurF"; titolo = "Incarichi"; }
     else if (scelta === 'TEPU_VIEW') { url = "https://lookerstudio.google.com/embed/reporting/6b529a65-c908-42ef-b7ae-b47488150c39/page/exRtF"; titolo = "Turni TePu"; }
     else if (scelta === 'TEPU_DISPO') { url = "https://forms.gle/DkKF4wc4t5oQEGvh7"; titolo = "Disponibilità TePu"; }
