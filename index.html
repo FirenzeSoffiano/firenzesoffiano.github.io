@@ -33,6 +33,12 @@
     .dropdown-content button { background: transparent; color: white; border: none; border-radius: 0; border-bottom: 1px solid #334155; justify-content: center; margin-bottom: 0; }
     .dropdown-content button:last-child { border-bottom: none; }
     .dropdown-content button:hover { background-color: #38bdf8; color: #0f172a; transform: none; }
+	
+	.btn-territori-dynamic {
+    background-color: #fef08a !important; /* Giallo tenue */
+    color: #854d0e !important; /* Testo marrone scuro per contrasto */
+    font-weight: bold;
+}
 </style>
 </head>
 <body>
@@ -75,7 +81,9 @@
 
       <div class="dropdown-container">
         <button class="btn-territori"><div class="icon-container">🌎</div> Territori</button>
-        <div class="dropdown-content">
+        <div class="dropdown-content">	
+			<button id="btnTerritoriApp" class="hidden btn-territori-dynamic" onclick="apriLink('TERRITORI_APP')">		<div class="icon-container"><img src="REPTERR.jpg" class="btn-icon"></div> App Territori
+			</button>
           <button onclick="apriLink('TERRITORI_CONG')">Mappa Totale</button>
           <button onclick="apriLink('TERRITORI_LAV')">In Lavorazione</button>
           <button onclick="apriLink('TERRITORI_NON_LAV')">Non Lavorati</button>
@@ -100,6 +108,7 @@
   let identificativoUtente = ""; 
   let linkAppSheetDinamico = ""; 
   let linkTePuDinamico = "";
+  let linkTerritoriDinamico = ""; 
 
   async function faseRicerca() {
     const input = document.getElementById("userInput");
@@ -157,15 +166,24 @@
   function successoLogin(data) {
     linkAppSheetDinamico = data.linkAppSheet || "";
     linkTePuDinamico = data.linkTePu || "";
+    linkTerritoriDinamico = data.linkTerritori || ""; // Riceve il link dalla colonna H
+
     document.getElementById("welcomeHeader").innerText = "Ciao " + identificativoUtente;
+    document.getElementById("idHeader").innerText = data.email || "";
+
     if (linkAppSheetDinamico) document.getElementById("btnAppSheet").classList.remove("hidden");
     if (linkTePuDinamico) document.getElementById("btnAppSheetTePu").classList.remove("hidden");
+    
+    // MOSTRA IL TASTO GIALLO SE IL LINK ESISTE
+    if (linkTerritoriDinamico) document.getElementById("btnTerritoriApp").classList.remove("hidden");
+
     document.getElementById("step2").classList.add("hidden");
     document.getElementById("step3").classList.remove("hidden");
-  }
+}
 
   function apriLink(scelta) {
     let url = ""; let titolo = "";
+	if (scelta === 'TERRITORI_APP') { window.open(linkTerritoriDinamico, "_blank"); return; }
     if (scelta === 'APPSHEET') { window.open(linkAppSheetDinamico, "_blank"); return; }
     if (scelta === 'APPSHEET_TEPU') { window.open(linkTePuDinamico, "_blank"); return; }
     if (scelta === 'TEPU_SITO') { window.open("https://sites.google.com/view/tepu/home?authuser=0", "_blank"); return; }
