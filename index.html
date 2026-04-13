@@ -74,10 +74,11 @@
       <button onclick="apriLink('INCARICHI')"><div class="icon-container"><img src="APPSHEET.jpg" class="btn-icon"></div> Visualizza gli incarichi</button>
       <button id="btnAppSheet" class="hidden" onclick="apriLink('APPSHEET')"><div class="icon-container"><img src="APPSHEET.jpg" class="btn-icon"></div> AppSheet Incarichi</button>
       <button id="btnAppSheetTePu" class="hidden" onclick="apriLink('APPSHEET_TEPU')"><div class="icon-container"><img src="APPSHEET.jpg" class="btn-icon"></div> AppSheet TePu</button>
-      <button onclick="apriLink('TEPU_VIEW')"><div class="icon-container"><img src="TEPU.jpg" class="btn-icon"></div> Visualizza turni TePu</button>
-      <button onclick="apriLink('TEPU_SITO')"><div class="icon-container"><img src="TEPU.jpg" class="btn-icon"></div> Sito TePu</button>
-      <button onclick="apriLink('TEPU_DISPO')"><div class="icon-container"><img src="CONFERMA.jpg" class="btn-icon"></div> Inserisci disponibilità</button>
-      <button onclick="apriLink('TEPU_CONF')"><div class="icon-container"><img src="CONFERMA.jpg" class="btn-icon"></div> Conferma turno TePu</button>
+      
+      <button id="btnTepuView" class="hidden" onclick="apriLink('TEPU_VIEW')"><div class="icon-container"><img src="TEPU.jpg" class="btn-icon"></div> Visualizza turni TePu</button>
+      <button id="btnTepuSito" class="hidden" onclick="apriLink('TEPU_SITO')"><div class="icon-container"><img src="TEPU.jpg" class="btn-icon"></div> Sito TePu</button>
+      <button id="btnTepuDispo" class="hidden" onclick="apriLink('TEPU_DISPO')"><div class="icon-container"><img src="CONFERMA.jpg" class="btn-icon"></div> Inserisci disponibilità</button>
+      <button id="btnTepuConf" class="hidden" onclick="apriLink('TEPU_CONF')"><div class="icon-container"><img src="CONFERMA.jpg" class="btn-icon"></div> Conferma turno TePu</button>
 
       <div class="dropdown-container">
         <button class="btn-territori"><div class="icon-container">🌎</div> Territori</button>
@@ -92,7 +93,7 @@
       <button onclick="location.reload()" class="btn-outline">Logout/Uscita</button>
     </div>
     <div id="loader" class="hidden" style="color:#94a3b8; font-size:0.8rem; margin-top:10px;">Elaborazione in corso...</div>
-    <div class="version-label">Versione 3.2</div>
+    <div class="version-label">Versione 3.4</div>
   </div>
 
   <div id="stepExternal">
@@ -166,16 +167,22 @@
   function successoLogin(data) {
     linkAppSheetDinamico = data.linkAppSheet || "";
     linkTePuDinamico = data.linkTePu || "";
-    linkTerritoriDinamico = data.linkTerritori || ""; // Riceve il link dalla colonna H
+    linkTerritoriDinamico = data.linkTerritori || "";
 
     document.getElementById("welcomeHeader").innerText = "Ciao " + identificativoUtente;
     document.getElementById("idHeader").innerText = data.email || "";
 
     if (linkAppSheetDinamico) document.getElementById("btnAppSheet").classList.remove("hidden");
     if (linkTePuDinamico) document.getElementById("btnAppSheetTePu").classList.remove("hidden");
-    
-    // MOSTRA IL TASTO GIALLO SE IL LINK ESISTE
     if (linkTerritoriDinamico) document.getElementById("btnTerritoriApp").classList.remove("hidden");
+    
+    // Gestione visibilità pulsanti TePu (Colonna I)
+    if (data.mostraTePu) {
+        document.getElementById("btnTepuView").classList.remove("hidden");
+        document.getElementById("btnTepuSito").classList.remove("hidden");
+        document.getElementById("btnTepuDispo").classList.remove("hidden");
+        document.getElementById("btnTepuConf").classList.remove("hidden");
+    }
 
     document.getElementById("step2").classList.add("hidden");
     document.getElementById("step3").classList.remove("hidden");
