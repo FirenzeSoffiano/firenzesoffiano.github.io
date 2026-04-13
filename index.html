@@ -54,11 +54,12 @@
     <div id="step2" class="hidden">
       <div class="testata-seconda-riga" style="margin-bottom: 5px;">🏡Firenze Soffiano</div>
       <h2 id="saluto"></h2>
-      <div id="areaLogin">
-        <input type="password" id="passInput" placeholder="Inserisci Password" onkeypress="if(event.key==='Enter') faseLogin()">
-        <button type="button" onclick="faseLogin()" style="justify-content: center;">Accedi</button>
-      </div>
-      <div id="areaPrimoAccesso" class="hidden">
+	<div id="areaLogin">
+		<input type="password" id="passInput" placeholder="Inserisci Password" onkeypress="if(event.key==='Enter') faseLogin()">
+		<button type="button" onclick="faseLogin()" style="justify-content: center;">Accedi</button>
+		<p onclick="faseResetRichiesta()" style="font-size: 0.75rem; color: #94a3b8; cursor: pointer; margin-top: 8px; text-decoration: underline; text-align: center; width: 100%;">Password dimenticata?</p>
+	</div>      
+	<div id="areaPrimoAccesso" class="hidden">
         <p style="font-size: 0.85rem; color: #f87171; margin-bottom: 10px; line-height: 1.2;">È il tuo primo accesso.<br>Crea una password personalizzata:</p>
         <input type="password" id="newPassInput" placeholder="Nuova Password">
         <input type="password" id="confirmPassInput" placeholder="Conferma Password">
@@ -163,7 +164,25 @@
     } catch (e) { alert("Errore salvataggio."); }
     mostraLoader(false);
   }
-
+  
+  async function faseResetRichiesta() {
+  if (!confirm("Vuoi resettare la password?")) return;
+  
+  mostraLoader(true);
+  try {
+    const resp = await fetch(`${SCRIPT_URL}?azione=resetPassword&telefono=${encodeURIComponent(identificativoUtente)}`);
+    const data = await resp.json();
+    if (data.resetInviato) {
+      alert("La password è stata resettata. Inserisci il tuo numero di cellulare per procedere.");
+      location.reload(); 
+    } else {
+      alert("Errore durante il reset. Verifica i dati.");
+    }
+  } catch (e) {
+    alert("Errore di connessione al server.");
+  }
+  mostraLoader(false);
+}
   function successoLogin(data) {
     linkAppSheetDinamico = data.linkAppSheet || "";
     linkTePuDinamico = data.linkTePu || "";
