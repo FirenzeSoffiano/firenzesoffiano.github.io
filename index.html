@@ -80,6 +80,7 @@
       <button id="btnTepuSito" class="hidden" onclick="apriLink('TEPU_SITO')"><div class="icon-container"><img src="TEPU.jpg" class="btn-icon"></div> Sito TePu</button>
       <button id="btnTepuDispo" class="hidden" onclick="apriLink('TEPU_DISPO')"><div class="icon-container"><img src="CONFERMA.jpg" class="btn-icon"></div> Inserisci disponibilità</button>
       <button id="btnTepuConf" class="hidden" onclick="apriLink('TEPU_CONF')"><div class="icon-container"><img src="CONFERMA.jpg" class="btn-icon"></div> Conferma turno TePu</button>
+	  <button id="btnTepuRapp" class="hidden" onclick="apriLink('TEPU_RAPP')"><div class="icon-container"><img src="CONFERMA.jpg" class="btn-icon"></div> Rapporto del turno TePu</button>
 
       <div class="dropdown-container">
         <button class="btn-territori"><div class="icon-container">🌎</div> Territori</button>
@@ -94,7 +95,7 @@
       <button onclick="location.reload()" class="btn-outline">Logout/Uscita</button>
     </div>
     <div id="loader" class="hidden" style="color:#94a3b8; font-size:0.8rem; margin-top:10px;">Elaborazione in corso...</div>
-    <div class="version-label">Versione 3.4</div>
+    <div class="version-label">Versione 3.5</div>
   </div>
 
   <div id="stepExternal">
@@ -201,6 +202,7 @@
         document.getElementById("btnTepuSito").classList.remove("hidden");
         document.getElementById("btnTepuDispo").classList.remove("hidden");
         document.getElementById("btnTepuConf").classList.remove("hidden");
+		document.getElementById("btnTepuRapp").classList.remove("hidden");
     }
 
     document.getElementById("step2").classList.add("hidden");
@@ -219,6 +221,7 @@
         'TEPU_VIEW': ["https://lookerstudio.google.com/embed/reporting/6b529a65-c908-42ef-b7ae-b47488150c39/page/exRtF", "Turni TePu"],
         'TEPU_DISPO': ["https://forms.gle/DkKF4wc4t5oQEGvh7", "Disponibilità"],
         'TEPU_CONF': ["https://forms.gle/14andBiw6spC4AXJA", "Conferma Turno"],
+		'TEPU_RAPP': ["https://forms.gle/zWxshWRgiTeWnc596", "Rapporto Turno"],
         'TERRITORI_CONG': ["https://umap.openstreetmap.fr/it/map/firenze-soffino-totale_1199067", "Mappa"],
         'TERRITORI_LAV': ["https://script.google.com/macros/s/AKfycbwWitvaggUAgVdYE5mf0GKG6XbZ03qLcJ7muUUXemrlNqTwPxG5hOAXMx5hZBNuX8sd/exec?tabella=Assegnati", "Lavorazione"],
         'TERRITORI_NON_LAV': ["https://script.google.com/macros/s/AKfycbwWitvaggUAgVdYE5mf0GKG6XbZ03qLcJ7muUUXemrlNqTwPxG5hOAXMx5hZBNuX8sd/exec?tabella=NonAssegnati", "Disponibili"]
