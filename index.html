@@ -160,7 +160,16 @@
     try {
       const resp = await fetch(`${SCRIPT_URL}?azione=cerca&email=${encodeURIComponent(valore)}`);
       const data = await resp.json();
+
       if (data.trovato) {
+        // Controllo se la password/colonna C contiene "NoAcces"
+        if (data.password === "NoAcces" || data.noAccess === true) {
+          document.getElementById("saluto").innerText = "ACCESSO NON CONSENTITO A QUESTO NOMINATIVO";
+          alert("ACCESSO NON CONSENTITO A QUESTO NOMINATIVO");
+          location.reload();
+          return;
+        }
+
         identificativoUtente = data.nome;
         document.getElementById("saluto").innerText = "Ciao " + data.nome;
         document.getElementById("step1").classList.add("hidden");
@@ -206,23 +215,24 @@
   }
   
   async function faseResetRichiesta() {
-  if (!confirm("Vuoi resettare la password?")) return;
-  
-  mostraLoader(true);
-  try {
-    const resp = await fetch(`${SCRIPT_URL}?azione=resetPassword&telefono=${encodeURIComponent(identificativoUtente)}`);
-    const data = await resp.json();
-    if (data.resetInviato) {
-      alert("La password è stata resettata. Inserisci il tuo numero di cellulare per procedere.");
-      location.reload(); 
-    } else {
-      alert("Errore durante il reset. Verifica i dati.");
+    if (!confirm("Vuoi resettare la password?")) return;
+    
+    mostraLoader(true);
+    try {
+      const resp = await fetch(`${SCRIPT_URL}?azione=resetPassword&telefono=${encodeURIComponent(identificativoUtente)}`);
+      const data = await resp.json();
+      if (data.resetInviato) {
+        alert("La password è stata resettata. Inserisci il tuo numero di cellulare per procedere.");
+        location.reload(); 
+      } else {
+        alert("Errore durante il reset. Verifica i dati.");
+      }
+    } catch (e) {
+      alert("Errore di connessione al server.");
     }
-  } catch (e) {
-    alert("Errore di connessione al server.");
+    mostraLoader(false);
   }
-  mostraLoader(false);
-}
+
   function successoLogin(data) {
     linkAppSheetDinamico = data.linkAppSheet || "";
     linkTePuDinamico = data.linkTePu || "";
@@ -235,37 +245,34 @@
     if (linkTePuDinamico) document.getElementById("btnAppSheetTePu").classList.remove("hidden");
     if (linkTerritoriDinamico) document.getElementById("btnTerritoriApp").classList.remove("hidden");
     
-    // Gestione visibilità pulsanti TePu (Colonna I)
     if (data.mostraTePu) {
         document.getElementById("btnTepuView").classList.remove("hidden");
         document.getElementById("btnTepuSito").classList.remove("hidden");
         document.getElementById("btnTepuDispo").classList.remove("hidden");
         document.getElementById("btnTepuConf").classList.remove("hidden");
-		document.getElementById("btnTepuRapp").classList.remove("hidden");
+        document.getElementById("btnTepuRapp").classList.remove("hidden");
     }
 
     document.getElementById("step2").classList.add("hidden");
     document.getElementById("step3").classList.remove("hidden");
-}
+  }
 
   function apriLink(scelta) {
     let url = ""; let titolo = "";
-	if (scelta === 'TEPU_VIEW') { 
+    if (scelta === 'TEPU_VIEW') { 
         window.open("https://datastudio.google.com/reporting/94a375b9-9fac-4ed1-b225-4eaf86e6409f", "_blank"); 
         return; 
     }
-	if (scelta === 'TERRITORI_APP') { window.open(linkTerritoriDinamico, "_blank"); return; }
+    if (scelta === 'TERRITORI_APP') { window.open(linkTerritoriDinamico, "_blank"); return; }
     if (scelta === 'APPSHEET') { window.open(linkAppSheetDinamico, "_blank"); return; }
     if (scelta === 'APPSHEET_TEPU') { window.open(linkTePuDinamico, "_blank"); return; }
     if (scelta === 'TEPU_SITO') { window.open("https://sites.google.com/view/tepu/home?authuser=0", "_blank"); return; }
     
     const links = {
         'INCARICHI': ["https://lookerstudio.google.com/embed/reporting/f152e697-95b9-440b-8f5e-773af928dd50/page/PEurF", "Incarichi"],
-        // 'TEPU_VIEW': ["https://lookerstudio.google.com/embed/reporting/6b529a65-c908-42ef-b7ae-b47488150c39/page/exRtF", "Turni TePu"],
-        //'TEPU_VIEW': ["https://datastudio.google.com/embed/reporting/94a375b9-9fac-4ed1-b225-4eaf86e6409f/page/nFctF", "Turni TePu"],
         'TEPU_DISPO': ["https://forms.gle/DkKF4wc4t5oQEGvh7", "Disponibilità"],
         'TEPU_CONF': ["https://forms.gle/14andBiw6spC4AXJA", "Conferma Turno"],
-		'TEPU_RAPP': ["https://forms.gle/zWxshWRgiTeWnc596", "Rapporto Turno"],
+        'TEPU_RAPP': ["https://forms.gle/zWxshWRgiTeWnc596", "Rapporto Turno"],
         'TERRITORI_CONG': ["https://umap.openstreetmap.fr/it/map/firenze-soffino-totale_1199067", "Mappa"],
         'TERRITORI_LAV': ["https://script.google.com/macros/s/AKfycbwWitvaggUAgVdYE5mf0GKG6XbZ03qLcJ7muUUXemrlNqTwPxG5hOAXMx5hZBNuX8sd/exec?tabella=Assegnati", "Lavorazione"],
         'TERRITORI_NON_LAV': ["https://script.google.com/macros/s/AKfycbwWitvaggUAgVdYE5mf0GKG6XbZ03qLcJ7muUUXemrlNqTwPxG5hOAXMx5hZBNuX8sd/exec?tabella=NonAssegnati", "Disponibili"]
