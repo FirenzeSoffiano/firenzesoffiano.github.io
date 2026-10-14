@@ -61,34 +61,46 @@ function importaEventiCalendarioAvanzato() {
 }
 
 function doGet(e) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheetGruppi = ss.getSheetByName("Gruppi");
-  var sheetDB = ss.getSheetByName("Database_PW");
   var azione = e.parameter.azione;
-
-  if (!azione) {
-    return HtmlService.createTemplateFromFile('index')
-      .evaluate()
-      .setTitle('Gestione TePu')
-      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-  }
-
-  // --- AZIONE: RICERCA ---
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = spreadsheet.getSheetByName("Database_PW"); // Assicurati che il nome del foglio sia corretto
+  
+  // GESTIONE DELLA RICERCA UTENTE
   if (azione === "cerca") {
-    var input = e.parameter.email.toLowerCase().trim();
-    var dataG = sheetGruppi.getDataRange().getValues();
-    for (var r = 1; r < dataG.length; r++) {
-      if (dataG[r][0].toString().toLowerCase().trim() === input || dataG[r][2].toString().toLowerCase().trim() === input) {
-        return successo({
+    var ricerca = e.parameter.email.toLowerCase().trim();
+    var dati = sheet.getDataRange().getValues(); // Legge tutta la tabella
+    
+    for (var i = 1; i < dati.length; i++) {
+      var nominativo = String(dati[i][0]).toLowerCase().trim(); // Colonna A (Nominativo)
+      var email = String(dati[i][1]).toLowerCase().trim();     // Colonna B (Telefono/Email)
+      var passwordColC = String(dati[i][2]).trim();             // Colonna C (Password / Stato)
+      
+      // Controlla se corrisponde al nome o all'email inseriti
+      if (nominativo === ricerca || email === ricerca) {
+        
+        // CONTROLLO BLOCCO: Se la colonna C contiene "NoAcces"
+        if (passwordColC === "NoAcces") {
+          return ContentService.createTextOutput(JSON.stringify({
+            trovato: false,
+            errore: "UTENTE NON ABILITATO ALL'ACCESSO"
+          })).setMimeType(ContentService.MimeType.JSON);
+        }
+        
+        // Se l'utente è abilitato, restituisce i dati normali
+        return ContentService.createTextOutput(JSON.stringify({
           trovato: true,
-          nome: dataG[r][0],
-          email: dataG[r][2].toString().trim()
-        });
+          nome: dati[i][0],
+          email: dati[i][1]
+        })).setMimeType(ContentService.MimeType.JSON);
       }
     }
-    return successo({ trovato: false });
+    
+    // Se non trova nessuno
+    return ContentService.createTextOutput(JSON.stringify({
+      trovato: false
+    })).setMimeType(ContentService.MimeType.JSON);
   }
-
+  
   // --- AZIONE: LOGIN ---
   if (azione === "login") {
     var identificativo = e.parameter.telefono.trim();
