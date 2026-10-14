@@ -151,23 +151,23 @@
   let linkTePuDinamico = "";
   let linkTerritoriDinamico = ""; 
 
-  async function faseRicerca() {
+async function faseRicerca() {
     const input = document.getElementById("userInput");
-    const valore = input.value.trim();
+    const valore = input.value.trim().toLowerCase();
     if (!valore) return alert("Inserisci Nome o Email");
+    
     mostraLoader(true);
     try {
       const resp = await fetch(`${SCRIPT_URL}?azione=cerca&email=${encodeURIComponent(valore)}`);
       const data = await resp.json();
 
       if (data.trovato) {
-        // Blocco di sicurezza rigoroso: controlla se la password o lo stato indicano "NoAcces"
-        // (Copriamo sia data.password che eventuali variazioni di proprietà restituite dal server)
-        if (data.password === "NoAcces" || data.noAccess === true || data.stato === "NoAcces") {
+        // Controllo diretto sul client: se la password/stato è NoAcces
+        if (data.password === "NoAcces" || data.noAccess === true || String(data.password).trim() === "NoAcces") {
           alert("UTENTE NON ABILITATO ALL'ACCESSO");
-          input.value = ""; // Pulisce il campo del nominativo
+          input.value = ""; // Pulisce il campo e ferma tutto
           mostraLoader(false);
-          return; // Interrompe l'esecuzione e non passa allo step 2
+          return; // Blocca categoricamente il passaggio alla schermata password
         }
 
         identificativoUtente = data.nome;
@@ -184,7 +184,7 @@
     mostraLoader(false);
   }
 
-  async function faseLogin() {
+async function faseLogin() {
     const pass = document.getElementById("passInput").value.trim();
     if (!pass) return alert("Inserisci la password");
     mostraLoader(true);
